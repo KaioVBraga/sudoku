@@ -11,6 +11,12 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 24px;
+
+  & > h1 {
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+  }
 
   & > *:not(:last-child) {
     margin-bottom: 16px;

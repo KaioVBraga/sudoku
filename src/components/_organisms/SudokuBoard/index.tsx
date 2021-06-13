@@ -1,13 +1,17 @@
 //@ts-ignore
 //@ts-nocheck
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, SubContainer, SquareContainer } from './styles';
 
 interface SudokuSquare {
   value: number;
 }
 
-const SudokuBoard = () => {
+interface SudokuBoardProps {
+  count?: number;
+}
+
+const SudokuBoard: React.FC<SudokuBoardProps> = props => {
   const subContainers = Array(9)
     .fill(null)
     .map((v: null, index) => index);
@@ -201,7 +205,7 @@ const SudokuBoard = () => {
 
     setCorrection(values);
     setBoardElements(newBoardElements);
-  }, []);
+  }, [props.count]);
 
   return (
     <Container>

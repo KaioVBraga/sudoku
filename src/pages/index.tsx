@@ -1,16 +1,20 @@
-import SudokuBoard from '../components/SudokuBoard';
+import React, { useState } from 'react';
 
-import { Container, Content } from '../styles';
+import Template from '../components/_templates/home';
+import SudokuBoard from '../components/_organisms/SudokuBoard';
+import Button from '../components/_atoms/Button';
 
-const Home = () => {
+const Home: React.FC = () => {
+  const [count, setCount] = useState(0);
+
   return (
-    <Container>
-      <Content>
-        <h1>Sudoku</h1>
+    <Template>
+      <h1>Sudoku</h1>
 
-        <SudokuBoard />
-      </Content>
-    </Container>
+      <SudokuBoard count={count} />
+
+      <Button onClick={() => setCount(count => count + 1)}>Redo</Button>
+    </Template>
   );
 };
 

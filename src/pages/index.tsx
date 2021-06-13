@@ -1,6 +1,6 @@
-import SudokuBoard from "../components/SudokuBoard";
+import SudokuBoard from '../components/SudokuBoard';
 
-import { Container, Content } from '../styles'
+import { Container, Content } from '../styles';
 
 const Home = () => {
   return (

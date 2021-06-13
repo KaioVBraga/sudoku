@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { createGlobalStyle } from "styled-components";
+import { memo } from 'react';
+import { createGlobalStyle } from 'styled-components';
 
 export default memo(createGlobalStyle`
   * {

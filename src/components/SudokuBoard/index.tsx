@@ -5,7 +5,6 @@ import { Container, SubContainer, SquareContainer } from './styles';
 
 interface SudokuSquare {
   value: number;
-  display: boolean;
 }
 
 const SudokuBoard = () => {
@@ -18,6 +17,7 @@ const SudokuBoard = () => {
     .map((v: null, index) => index);
 
   const [boardElements, setBoardElements] = useState<SudokuSquare[]>([]);
+  const [correction, setCorrection] = useState([]);
 
   const handleToggle = useCallback(
     index => {
@@ -39,20 +39,15 @@ const SudokuBoard = () => {
   );
 
   useEffect(() => {
-    const baseArray = Array(9)
+    const baseLine = Array(9)
       .fill(null)
-      .map((v: null, index) => index + 1);
-
-    console.log('MATH::', Math.floor(Math.random() * 10));
-    console.log('BASE ARRAY::', baseArray);
-
-    const baseLine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      .map((v, index) => index + 1);
 
     const baseBoardArray = Array(81)
       .fill(null)
       .map(v => baseLine);
 
-    for (let i = 0; i < 81; i++) {
+    baseBoardArray.forEach(() => {
       const indices = baseBoardArray
         .map((value, index) => ({ value, index }))
         .filter(obj => Array.isArray(obj.value));
@@ -73,9 +68,9 @@ const SudokuBoard = () => {
         return sum;
       }, {});
 
-      for (let k = 0; k < 81; k++) {
-        if (!Array.isArray(baseBoardArray[k])) {
-          continue;
+      baseBoardArray.forEach((v, k) => {
+        if (!Array.isArray(v)) {
+          return;
         }
 
         const currentBlockPos =
@@ -83,38 +78,32 @@ const SudokuBoard = () => {
         const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
 
         if (currentBlockPos === blockPos) {
-          baseBoardArray[k]
-            .filter(valueK => index.value.includes(valueK))
-            .forEach(valueK => {
-              valuesBoard[valueK] += 1;
-            });
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
 
         const currentLinePos = Math.floor(index.index / 9);
         const linePos = Math.floor(k / 9);
 
         if (currentLinePos === linePos) {
-          baseBoardArray[k]
-            .filter(valueK => index.value.includes(valueK))
-            .forEach(valueK => {
-              valuesBoard[valueK] += 1;
-            });
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
 
         const currentColumnPos = index.index % 9;
         const columnPos = k % 9;
 
         if (currentColumnPos === columnPos) {
-          baseBoardArray[k]
-            .filter(valueK => index.value.includes(valueK))
-            .forEach(valueK => {
-              valuesBoard[valueK] += 1;
-            });
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
-      }
+      });
 
       const valuesBoardArr = Object.keys(valuesBoard);
 
@@ -122,13 +111,11 @@ const SudokuBoard = () => {
         (valueA, valueB) => valuesBoard[valueA] - valuesBoard[valueB]
       );
 
-      const randomValue =
-        // index.value[Math.floor(Math.random() * index.value.length)];
-        Number(valuesBoardArr[0]);
+      const randomValue = Number(valuesBoardArr[0]);
 
-      for (let k = 0; k < 81; k++) {
-        if (!Array.isArray(baseBoardArray[k])) {
-          continue;
+      baseBoardArray.forEach((v, k) => {
+        if (!Array.isArray(v)) {
+          return;
         }
 
         const currentBlockPos =
@@ -136,42 +123,83 @@ const SudokuBoard = () => {
         const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
 
         if (currentBlockPos === blockPos) {
-          baseBoardArray[k] = baseBoardArray[k].filter(
-            value => value !== randomValue
-          );
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
 
         const currentLinePos = Math.floor(index.index / 9);
         const linePos = Math.floor(k / 9);
 
         if (currentLinePos === linePos) {
-          baseBoardArray[k] = baseBoardArray[k].filter(
-            value => value !== randomValue
-          );
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
 
         const currentColumnPos = index.index % 9;
         const columnPos = k % 9;
 
         if (currentColumnPos === columnPos) {
-          baseBoardArray[k] = baseBoardArray[k].filter(
-            value => value !== randomValue
-          );
-          continue;
+          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+            valuesBoard[valueK] += 1;
+          });
+          return;
         }
-      }
+      });
+
+      baseBoardArray.forEach((v, k) => {
+        if (!Array.isArray(v)) {
+          return;
+        }
+
+        const currentBlockPos =
+          Math.floor((index.index % 9) / 3) + Math.floor(index.index / 27) * 3;
+        const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
+
+        if (currentBlockPos === blockPos) {
+          baseBoardArray[k] = v.filter(value => value !== randomValue);
+          return;
+        }
+
+        const currentLinePos = Math.floor(index.index / 9);
+        const linePos = Math.floor(k / 9);
+
+        if (currentLinePos === linePos) {
+          baseBoardArray[k] = v.filter(value => value !== randomValue);
+          return;
+        }
+
+        const currentColumnPos = index.index % 9;
+        const columnPos = k % 9;
+
+        if (currentColumnPos === columnPos) {
+          baseBoardArray[k] = v.filter(value => value !== randomValue);
+          return;
+        }
+      });
 
       baseBoardArray[index.index] = randomValue;
-    }
+    });
 
     const values = baseBoardArray;
 
+    let notDisplayQuant = 30;
+
     const newBoardElements = values.map(value => {
-      return { value, display: true };
+      const display =
+        notDisplayQuant === 0 || Math.floor(Math.random() * 2) === 1;
+
+      if (!display) {
+        notDisplayQuant -= 1;
+      }
+
+      return { value: display ? value : null };
     });
 
+    setCorrection(values);
     setBoardElements(newBoardElements);
   }, []);
 
@@ -183,14 +211,15 @@ const SudokuBoard = () => {
         return (
           <SubContainer>
             {lineContainer.map(v => {
-              const start = (v % 3) * 9 + line;
-              const end = (v % 3) * 9 + line + 3;
+              const base = (v % 3) * 9 + line;
+              const start = base;
+              const end = base + 3;
 
               return boardElements
                 .slice(start, end)
-                .map(({ value, display }, index) => (
+                .map(({ value }, index) => (
                   <SquareContainer onClick={() => handleToggle(start + index)}>
-                    {display ? value : null}
+                    {value}
                   </SquareContainer>
                 ));
             })}

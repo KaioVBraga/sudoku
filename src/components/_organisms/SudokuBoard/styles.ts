@@ -45,6 +45,7 @@ export const SquareContainer = styled.div<SquareContainerProps>`
   user-select: none;
   font-weight: 400;
   font-family: 'Roboto', sans-serif;
+  transition: 0.15s all ease-in-out;
 
   &:nth-child(3n - 2) {
     border-right: 1px solid #cecece;
@@ -56,5 +57,9 @@ export const SquareContainer = styled.div<SquareContainerProps>`
 
   &:not(:nth-child(1), :nth-child(2), :nth-child(3)) {
     border-top: 1px solid #cecece;
+  }
+
+  &:hover {
+    font-size: 22px;
   }
 `;

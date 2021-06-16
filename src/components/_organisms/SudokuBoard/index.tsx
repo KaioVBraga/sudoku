@@ -21,7 +21,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
     .map((v: null, index) => index);
 
   const [boardElements, setBoardElements] = useState<SudokuSquare[]>([]);
-  const [correction, setCorrection] = useState([]);
+  // const [correction, setCorrection] = useState([]);
 
   const handleToggle = useCallback(
     index => {
@@ -203,7 +203,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
       return { value: display ? value : null };
     });
 
-    setCorrection(values);
+    // setCorrection(values);
     setBoardElements(newBoardElements);
   }, [props.count]);
 

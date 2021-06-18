@@ -156,33 +156,40 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
 
       const nanValue = baseBoardArray.find(value => isNaN(value));
 
-      console.log('NAN VALUE', nanValue);
-
       if (nanValue === undefined || nanValue === null) {
         return baseBoardArray;
       }
     }
   }, []);
 
+  const getBoardElements = values => {
+    const notDisplayQuant = 30;
+
+    const { boardElements } = values.reduce(
+      (object, value) => {
+        const display =
+          object.notDisplayQuant === 0 || Math.floor(Math.random() * 2) === 1;
+
+        if (!display) {
+          object.notDisplayQuant -= 1;
+        }
+
+        object.boardElements.push({ value: display ? value : null });
+
+        return object;
+      },
+      { notDisplayQuant, boardElements: [] }
+    );
+
+    return boardElements;
+  };
+
   useEffect(() => {
     const values = getValues();
-
-    // let notDisplayQuant = 30;
-    let notDisplayQuant = 0;
-
-    const newBoardElements = values.map(value => {
-      const display =
-        notDisplayQuant === 0 || Math.floor(Math.random() * 2) === 1;
-
-      if (!display) {
-        notDisplayQuant -= 1;
-      }
-
-      return { value: display ? value : null };
-    });
+    const boardElements = getBoardElements(values);
 
     // setCorrection(values);
-    setBoardElements(newBoardElements);
+    setBoardElements(boardElements);
   }, [props.count]);
 
   return (

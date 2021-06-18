@@ -163,22 +163,29 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
   }, []);
 
   const getBoardElements = values => {
-    const notDisplayQuant = 30;
+    // const notDisplayQuant = 30;
+
+    const displayQuant = 30;
 
     const { boardElements } = values.reduce(
       (object, value) => {
-        const display =
-          object.notDisplayQuant === 0 || Math.floor(Math.random() * 2) === 1;
+        // const display =
+        //   object.notDisplayQuant === 0 || Math.floor(Math.random() * 10) === 1;
 
-        if (!display) {
-          object.notDisplayQuant -= 1;
-        }
+        // if (!display) {
+        //   object.notDisplayQuant -= 1;
+        // }
+
+        const display = Math.floor(Math.random() * 81) <= displayQuant;
 
         object.boardElements.push({ value: display ? value : null });
 
         return object;
       },
-      { notDisplayQuant, boardElements: [] }
+      {
+        // notDisplayQuant,
+        boardElements: []
+      }
     );
 
     return boardElements;

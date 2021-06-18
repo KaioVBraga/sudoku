@@ -42,155 +42,133 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
     [boardElements]
   );
 
+  const getValues = useCallback(() => {
+    while (true) {
+      const baseLine = Array(9)
+        .fill(null)
+        .map((v, index) => index + 1);
+
+      const baseBoardArray = Array(81)
+        .fill(null)
+        .map(v => baseLine);
+
+      baseBoardArray.forEach(() => {
+        const indices = baseBoardArray
+          .map((value, index) => ({ value, index }))
+          .filter(obj => Array.isArray(obj.value));
+
+        indices.sort(
+          (indexA, indexB) => indexA.value.length - indexB.value.length
+        );
+
+        const shortIndices = indices.filter(
+          index => index.value.length === indices[0].value.length
+        );
+
+        const index =
+          shortIndices[Math.floor(Math.random() * shortIndices.length)];
+
+        const valuesBoard = index.value.reduce((sum, v) => {
+          sum[v] = 0;
+          return sum;
+        }, {});
+
+        baseBoardArray.forEach((v, k) => {
+          if (!Array.isArray(v)) {
+            return;
+          }
+
+          const currentBlockPos =
+            Math.floor((index.index % 9) / 3) +
+            Math.floor(index.index / 27) * 3;
+          const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
+
+          if (currentBlockPos === blockPos) {
+            v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+              valuesBoard[valueK] += 1;
+            });
+            return;
+          }
+
+          const currentLinePos = Math.floor(index.index / 9);
+          const linePos = Math.floor(k / 9);
+
+          if (currentLinePos === linePos) {
+            v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+              valuesBoard[valueK] += 1;
+            });
+            return;
+          }
+
+          const currentColumnPos = index.index % 9;
+          const columnPos = k % 9;
+
+          if (currentColumnPos === columnPos) {
+            v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
+              valuesBoard[valueK] += 1;
+            });
+            return;
+          }
+        });
+
+        const valuesBoardArr = Object.keys(valuesBoard);
+
+        valuesBoardArr.sort(
+          (valueA, valueB) => valuesBoard[valueA] - valuesBoard[valueB]
+        );
+
+        const randomValue = Number(valuesBoardArr[0]);
+
+        baseBoardArray.forEach((v, k) => {
+          if (!Array.isArray(v)) {
+            return;
+          }
+
+          const currentBlockPos =
+            Math.floor((index.index % 9) / 3) +
+            Math.floor(index.index / 27) * 3;
+          const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
+
+          if (currentBlockPos === blockPos) {
+            baseBoardArray[k] = v.filter(value => value !== randomValue);
+            return;
+          }
+
+          const currentLinePos = Math.floor(index.index / 9);
+          const linePos = Math.floor(k / 9);
+
+          if (currentLinePos === linePos) {
+            baseBoardArray[k] = v.filter(value => value !== randomValue);
+            return;
+          }
+
+          const currentColumnPos = index.index % 9;
+          const columnPos = k % 9;
+
+          if (currentColumnPos === columnPos) {
+            baseBoardArray[k] = v.filter(value => value !== randomValue);
+            return;
+          }
+        });
+
+        baseBoardArray[index.index] = randomValue;
+      });
+
+      const nanValue = baseBoardArray.find(value => isNaN(value));
+
+      console.log('NAN VALUE', nanValue);
+
+      if (nanValue === undefined || nanValue === null) {
+        return baseBoardArray;
+      }
+    }
+  }, []);
+
   useEffect(() => {
-    const baseLine = Array(9)
-      .fill(null)
-      .map((v, index) => index + 1);
+    const values = getValues();
 
-    const baseBoardArray = Array(81)
-      .fill(null)
-      .map(v => baseLine);
-
-    baseBoardArray.forEach(() => {
-      const indices = baseBoardArray
-        .map((value, index) => ({ value, index }))
-        .filter(obj => Array.isArray(obj.value));
-
-      indices.sort(
-        (indexA, indexB) => indexA.value.length - indexB.value.length
-      );
-
-      const shortIndices = indices.filter(
-        index => index.value.length === indices[0].value.length
-      );
-
-      const index =
-        shortIndices[Math.floor(Math.random() * shortIndices.length)];
-
-      const valuesBoard = index.value.reduce((sum, v) => {
-        sum[v] = 0;
-        return sum;
-      }, {});
-
-      baseBoardArray.forEach((v, k) => {
-        if (!Array.isArray(v)) {
-          return;
-        }
-
-        const currentBlockPos =
-          Math.floor((index.index % 9) / 3) + Math.floor(index.index / 27) * 3;
-        const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
-
-        if (currentBlockPos === blockPos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-
-        const currentLinePos = Math.floor(index.index / 9);
-        const linePos = Math.floor(k / 9);
-
-        if (currentLinePos === linePos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-
-        const currentColumnPos = index.index % 9;
-        const columnPos = k % 9;
-
-        if (currentColumnPos === columnPos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-      });
-
-      const valuesBoardArr = Object.keys(valuesBoard);
-
-      valuesBoardArr.sort(
-        (valueA, valueB) => valuesBoard[valueA] - valuesBoard[valueB]
-      );
-
-      const randomValue = Number(valuesBoardArr[0]);
-
-      baseBoardArray.forEach((v, k) => {
-        if (!Array.isArray(v)) {
-          return;
-        }
-
-        const currentBlockPos =
-          Math.floor((index.index % 9) / 3) + Math.floor(index.index / 27) * 3;
-        const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
-
-        if (currentBlockPos === blockPos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-
-        const currentLinePos = Math.floor(index.index / 9);
-        const linePos = Math.floor(k / 9);
-
-        if (currentLinePos === linePos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-
-        const currentColumnPos = index.index % 9;
-        const columnPos = k % 9;
-
-        if (currentColumnPos === columnPos) {
-          v.filter(valueK => index.value.includes(valueK)).forEach(valueK => {
-            valuesBoard[valueK] += 1;
-          });
-          return;
-        }
-      });
-
-      baseBoardArray.forEach((v, k) => {
-        if (!Array.isArray(v)) {
-          return;
-        }
-
-        const currentBlockPos =
-          Math.floor((index.index % 9) / 3) + Math.floor(index.index / 27) * 3;
-        const blockPos = Math.floor((k % 9) / 3) + Math.floor(k / 27) * 3;
-
-        if (currentBlockPos === blockPos) {
-          baseBoardArray[k] = v.filter(value => value !== randomValue);
-          return;
-        }
-
-        const currentLinePos = Math.floor(index.index / 9);
-        const linePos = Math.floor(k / 9);
-
-        if (currentLinePos === linePos) {
-          baseBoardArray[k] = v.filter(value => value !== randomValue);
-          return;
-        }
-
-        const currentColumnPos = index.index % 9;
-        const columnPos = k % 9;
-
-        if (currentColumnPos === columnPos) {
-          baseBoardArray[k] = v.filter(value => value !== randomValue);
-          return;
-        }
-      });
-
-      baseBoardArray[index.index] = randomValue;
-    });
-
-    const values = baseBoardArray;
-
-    let notDisplayQuant = 30;
+    // let notDisplayQuant = 30;
+    let notDisplayQuant = 0;
 
     const newBoardElements = values.map(value => {
       const display =

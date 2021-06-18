@@ -1,14 +1,16 @@
 //@ts-ignore
 //@ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, SubContainer, SquareContainer } from './styles';
+import {
+  Container,
+  BoardContainer,
+  SubContainer,
+  SquareContainer
+} from './styles';
+import Button from '../../_atoms/Button';
 
 interface SudokuSquare {
   value: number;
-}
-
-interface SudokuBoardProps {
-  count?: number;
 }
 
 const SudokuBoard: React.FC<SudokuBoardProps> = props => {
@@ -21,7 +23,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
     .map((v: null, index) => index);
 
   const [boardElements, setBoardElements] = useState<SudokuSquare[]>([]);
-  // const [correction, setCorrection] = useState([]);
+  const [correction, setCorrection] = useState([]);
 
   const handleToggle = useCallback(
     index => {
@@ -191,37 +193,47 @@ const SudokuBoard: React.FC<SudokuBoardProps> = props => {
     return boardElements;
   };
 
-  useEffect(() => {
+  const loadBoard = () => {
     const values = getValues();
     const boardElements = getBoardElements(values);
 
-    // setCorrection(values);
+    setCorrection(values);
     setBoardElements(boardElements);
-  }, [props.count]);
+  };
+
+  useEffect(() => {
+    loadBoard();
+  }, []);
 
   return (
     <Container>
-      {subContainers.map(sub => {
-        const line = 3 * (sub % 3) + Math.floor(sub / 3) * 27;
+      <BoardContainer>
+        {subContainers.map(sub => {
+          const line = 3 * (sub % 3) + Math.floor(sub / 3) * 27;
 
-        return (
-          <SubContainer>
-            {lineContainer.map(v => {
-              const base = (v % 3) * 9 + line;
-              const start = base;
-              const end = base + 3;
+          return (
+            <SubContainer>
+              {lineContainer.map(v => {
+                const base = (v % 3) * 9 + line;
+                const start = base;
+                const end = base + 3;
 
-              return boardElements
-                .slice(start, end)
-                .map(({ value }, index) => (
-                  <SquareContainer onClick={() => handleToggle(start + index)}>
-                    {value}
-                  </SquareContainer>
-                ));
-            })}
-          </SubContainer>
-        );
-      })}
+                return boardElements
+                  .slice(start, end)
+                  .map(({ value }, index) => (
+                    <SquareContainer
+                      onClick={() => handleToggle(start + index)}
+                    >
+                      {value}
+                    </SquareContainer>
+                  ));
+              })}
+            </SubContainer>
+          );
+        })}
+      </BoardContainer>
+
+      <Button onClick={loadBoard}>Redo</Button>
     </Container>
   );
 };

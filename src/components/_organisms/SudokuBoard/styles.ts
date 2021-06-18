@@ -1,6 +1,15 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > *:not(:last-child) {
+    margin-bottom: 16px;
+  }
+`;
+
+export const BoardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   /* column-gap: 5px;
